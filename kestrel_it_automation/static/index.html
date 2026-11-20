@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kestrel | IT Operations Portal</title><link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="shell">
+<aside class="sidebar">
+  <div class="brand"><div class="brandmark">K</div><div><b>KESTREL</b><small>LOGISTICS · IT PORTAL</small></div></div>
+  <div class="navlabel">WORKSPACE</div>
+  <a class="nav active" href="#dashboard">▦ <span>Dashboard</span></a>
+  <a class="nav" href="#employees">♙ <span>Employees</span></a>
+  <a class="nav" href="#automation">⚡ <span>Automation Jobs</span></a>
+  <a class="nav" href="#activity">☷ <span>Message Activity</span></a>
+  <div class="sidebottom"><div class="connection"><span class="dot" id="sideDot"></span><div><b>RabbitMQ</b><small id="sideStatus">Checking connection…</small></div></div><small class="version">DEMO ENVIRONMENT · v1.0</small></div>
+</aside>
+<main class="main">
+<header class="topbar"><div><div class="eyebrow">KESTREL LOGISTICS / IT OPERATIONS</div><h1>Automation Dashboard</h1></div><div class="topright"><span class="livepill"><i></i> LIVE WORKSPACE</span><div class="avatar">IT</div></div></header>
+<section class="hero"><div><div class="eyebrow light">IT OPERATIONS & HELPDESK</div><h2>One portal. Five automations.</h2><p>Add an employee, select a job, and send a message to RabbitMQ. The consumer processes each message independently.</p></div><div class="heroicon">⌘</div></section>
+<section class="stats">
+ <div class="stat"><span>EMPLOYEES</span><strong id="sEmployees">0</strong><small>Registered in portal</small></div>
+ <div class="stat"><span>MESSAGES SENT</span><strong id="sTotal">0</strong><small>Automation requests</small></div>
+ <div class="stat"><span>COMPLETED</span><strong id="sCompleted">0</strong><small>Successfully processed</small></div>
+ <div class="stat"><span>IN QUEUE</span><strong id="sPending">0</strong><small>Queued or processing</small></div>
+ <div class="stat"><span>FAILED</span><strong id="sFailed">0</strong><small>Needs attention</small></div>
+</section>
+<section class="panel" id="employees">
+ <div class="sectionhead"><div><div class="eyebrow">DIRECT ENTRY · NO EXCEL REQUIRED</div><h3>Employee Management</h3><p>Add one employee at a time or register more employees as needed.</p></div><span class="tag">MANUAL ENTRY</span></div>
+ <form id="employeeForm" class="employeeform">
+  <label>Employee ID<input name="employee_code" placeholder="e.g. KLG001" required></label>
+  <label>First Name<input name="first_name" placeholder="e.g. Asha" required></label>
+  <label>Last Name<input name="last_name" placeholder="e.g. Rao" required></label>
+  <label>Email<input name="email" type="email" placeholder="asha@kestrel.demo"></label>
+  <label>Department<select name="department"><option>IT</option><option>HR</option><option>Finance</option><option>Operations</option><option>Logistics</option><option>Sales</option></select></label>
+  <label>Designation<input name="designation" placeholder="e.g. Operations Executive"></label>
+  <button class="primary" type="submit">＋ Add Employee</button>
+ </form>
+ <div class="tablewrap"><table><thead><tr><th>EMPLOYEE</th><th>EMPLOYEE ID</th><th>DEPARTMENT</th><th>DESIGNATION</th><th>ADDED</th></tr></thead><tbody id="employeeRows"><tr><td colspan="5" class="empty">No employees yet. Add your first employee above.</td></tr></tbody></table></div>
+</section>
+<section class="panel" id="automation">
+ <div class="sectionhead"><div><div class="eyebrow">RABBITMQ · MESSAGE-BASED PROCESSING</div><h3>Automation Centre</h3><p>Choose an employee and run any of the five IT operations.</p></div><span class="tag blue">5 ACTIVE MODULES</span></div>
+ <div class="runbar"><label>Select Employee<select id="employeeSelect"><option value="">Add an employee first</option></select></label><div class="selectedhint" id="selectedHint">Select an employee to enable automation</div></div>
+ <div class="jobgrid">
+  <article class="jobcard"><div class="jobicon purple">ID</div><div class="jobmeta"><span class="jobnum">JOB 01</span><h4>Login ID Creation</h4><p>Generate a unique login ID from employee name.</p></div><button onclick="runJob('login_id')" class="runbtn">Run job →</button></article>
+  <article class="jobcard"><div class="jobicon blue">AC</div><div class="jobmeta"><span class="jobnum">JOB 02</span><h4>Account Creation</h4><p>Create a demo IT account and temporary credential.</p></div><button onclick="runJob('account')" class="runbtn">Run job →</button></article>
+  <article class="jobcard"><div class="jobicon orange">AR</div><div class="jobmeta"><span class="jobnum">JOB 03</span><h4>Access Request</h4><p>Submit an application or system access request.</p><select id="accessType" class="inlineSelect"><option>Standard Application</option><option>ERP System</option><option>HR Portal</option><option>Shared Drive</option><option>Admin Access</option></select><button onclick="runJob('access')" class="runbtn">Run job →</button></article>
+  <article class="jobcard"><div class="jobicon green">PW</div><div class="jobmeta"><span class="jobnum">JOB 04</span><h4>Password Reset</h4><p>Process a demo password reset request.</p></div><button onclick="runJob('password')" class="runbtn">Run job →</button></article>
+  <article class="jobcard"><div class="jobicon red">HD</div><div class="jobmeta"><span class="jobnum">JOB 05</span><h4>Helpdesk Ticket</h4><p>Create an IT support ticket for an employee.</p><select id="ticketCategory" class="inlineSelect"><option>Software</option><option>Hardware</option><option>Network</option><option>Login Issues</option></select><input id="ticketIssue" class="inlineInput" placeholder="Describe the issue (optional)"><button onclick="runJob('ticket')" class="runbtn">Run job →</button></article>
+ </div>
+</section>
+<section class="panel" id="activity">
+ <div class="sectionhead"><div><div class="eyebrow">PRODUCER → QUEUE → CONSUMER</div><h3>Message Activity</h3><p>Each click sends one individual message to RabbitMQ. Status updates automatically.</p></div><button class="secondary" onclick="refreshAll()">↻ Refresh</button></div>
+ <div class="rabbitbar"><span class="dot" id="rabbitDot"></span><b id="rabbitTitle">Checking RabbitMQ…</b><span id="rabbitDetail">Connecting to local broker</span><span class="queuepill" id="queueName">QUEUE</span></div>
+ <div class="tablewrap"><table><thead><tr><th>EMPLOYEE</th><th>AUTOMATION</th><th>MESSAGE ID</th><th>STATUS</th><th>RESULT</th><th>TIME</th></tr></thead><tbody id="jobRows"><tr><td colspan="6" class="empty">No messages yet. Run an automation job to get started.</td></tr></tbody></table></div>
+</section>
+<footer>KESTREL LOGISTICS · IT OPERATIONS AUTOMATION DEMO <span>Powered by FastAPI + RabbitMQ + Python Consumer</span></footer>
+</main></div>
+<div id="toast" class="toast"></div>
+<script src="/static/app.js"></script>
+</body></html>
